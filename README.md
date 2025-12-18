@@ -48,7 +48,7 @@ Ao final do desenvolvimento, ocorreu uma **competição de robôs sumô entre as
 * Arquivos de configuração e testes
 * Documentação do projeto
 
-##🏆 Resultados
+## 🏆 Resultados
 A estrutura física do robô foi montada de forma adequada, com o chassi e os fios organizados e posicionados de maneira coerente, garantindo estabilidade e segurança elétrica. No entanto, a lógica de programação não funcionou completamente como esperado durante a competição. Apesar disso, a atividade proporcionou um aprendizado significativo, permitindo à equipe compreender melhor a integração entre hardware e software, além da importância de testes e ajustes na lógica de controle.
 
 ## 🚀 Melhorias Futuras
