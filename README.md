@@ -54,7 +54,7 @@ A estrutura física do robô foi montada de forma adequada, com o chassi e os fi
 ## 🚀 Melhorias Futuras
 - Otimização da lógica de ataque
 - Melhoria na precisão dos sensores
-- Ajustes mecânicos para maior estabilidade
+- Adicionar corpo de prova para maior estabilidade
   
 ## 👥 Autores
 Gisele Canuto Damasceno;
