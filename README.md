@@ -63,4 +63,4 @@ Filipe Casaes Santana;
 Maria Clara Santana Machado;
 Yan Klaivert Kaionan Mascarenhas Lima.
 
-volvido em grupo como atividade acadêmica no SENAI.
+Desenvolvido em grupo como atividade acadêmica no SENAI.
