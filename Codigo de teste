@@ -1,1 +1,129 @@
+// =======================================================
+// ---- PINOS DOS MOTORES (PONTE H L298N) ----
+// =======================================================
+#define IN1 3   // Motor A
+#define IN2 5
+#define IN3 6   // Motor B
+#define IN4 9
+
+// =======================================================
+// ---- ULTRASSONS ----
+// =======================================================
+// Frente
+#define TRIG_F 2
+#define ECHO_F 4
+
+// Esquerda
+#define TRIG_E 7
+#define ECHO_E 8
+
+// Direita
+#define TRIG_D A0
+#define ECHO_D 10
+
+// =======================================================
+// ---- SENSORES DE LINHA (4 DIGITAIS) ----
+// =======================================================
+#define LINHA_1 A2
+#define LINHA_2 A3
+#define LINHA_3 A4
+#define LINHA_4 A5
+
+// =======================================================
+// ---- FUNÇÃO ULTRASSOM ----
+// =======================================================
+float lerUltrassom(int trigPin, int echoPin) {
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duracao = pulseIn(echoPin, HIGH, 30000);
+  return duracao / 58.0;
+}
+
+// =======================================================
+// ---- SETUP ----
+// =======================================================
+void setup() {
+
+  Serial.begin(9600);
+  Serial.println("\n=== TESTE SENSORES E ULTRASSONS ===\n");
+
+  // Motores
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  // Ultrassons
+  pinMode(TRIG_F, OUTPUT); pinMode(ECHO_F, INPUT);
+  pinMode(TRIG_E, OUTPUT); pinMode(ECHO_E, INPUT);
+  pinMode(TRIG_D, OUTPUT); pinMode(ECHO_D, INPUT);
+
+  // Sensores linha
+  pinMode(LINHA_1, INPUT);
+  pinMode(LINHA_2, INPUT);
+  pinMode(LINHA_3, INPUT);
+  pinMode(LINHA_4, INPUT);
+}
+
+// =======================================================
+// ---- LOOP ----
+// =======================================================
+void loop() {
+
+  // ----- Distâncias -----
+  float frente   = lerUltrassom(TRIG_F, ECHO_F);
+  float esquerda = lerUltrassom(TRIG_E, ECHO_E);
+  float direita  = lerUltrassom(TRIG_D, ECHO_D);
+
+  Serial.print("Frente: "); Serial.print(frente); Serial.print(" cm | ");
+  Serial.print("Esq: ");   Serial.print(esquerda); Serial.print(" cm | ");
+  Serial.print("Dir: ");   Serial.print(direita);  Serial.println(" cm");
+
+  // ----- Linha -----
+  int s1 = digitalRead(LINHA_1);
+  int s2 = digitalRead(LINHA_2);
+  int s3 = digitalRead(LINHA_3);
+  int s4 = digitalRead(LINHA_4);
+
+  Serial.print("Linha 1: "); Serial.print(s1);
+  Serial.print(" | Linha 2: "); Serial.print(s2);
+  Serial.print(" | Linha 3: "); Serial.print(s3);
+  Serial.print(" | Linha 4: "); Serial.println(s4);
+
+  Serial.println("----------------------------");
+  delay(800);
+}
+
+
+
+
+
+
+
+
+#define SENSOR A2  // coloque aqui o pino onde ligou o OUT
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(SENSOR, INPUT);
+  Serial.println("Teste do sensor de linha iniciado!");
+}
+
+void loop() {
+  int leitura = digitalRead(SENSOR);
+
+  if (leitura == 0) {
+    Serial.println("PRETO");
+  } else {
+    Serial.println("BRANCO");
+  }
+
+  delay(300); // só pra facilitar leitura
+}
 
