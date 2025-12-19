@@ -1,0 +1,201 @@
+// =======================================================
+// ---- CONFIGURAÇÃO GERAL ----
+// =======================================================
+#define TEMPO_DEBUG 7000   // ms em modo teste
+
+// =======================================================
+// ---- MOTORES - L298N ----
+// =======================================================
+#define IN1 3
+#define IN2 5
+#define IN3 6
+#define IN4 9
+
+// =======================================================
+// ---- ULTRASSÔNICOS ----
+// =======================================================
+#define TRIG_F 2
+#define ECHO_F 4
+
+#define TRIG_E 7
+#define ECHO_E 8
+
+#define TRIG_D A0
+#define ECHO_D 10
+
+// =======================================================
+// ---- SENSORES DE LINHA ----
+// =======================================================
+#define LINHA_E A2
+#define LINHA_C A3
+#define LINHA_D A4
+
+// =======================================================
+// ---- VARIÁVEIS GLOBAIS ----
+// =======================================================
+bool brancoLOW = true;   // será detectado no modo debug
+unsigned long tempoInicio;
+
+// =======================================================
+// ---- FUNÇÃO ULTRASSOM ----
+// =======================================================
+float lerUltrassom(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duracao = pulseIn(echoPin, HIGH, 25000);
+  if (duracao == 0) return 300;
+  return duracao / 58.0;
+}
+
+// =======================================================
+// ---- CONTROLE DE MOTORES ----
+// =======================================================
+void frente() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+}
+
+void tras() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+}
+
+void esquerda() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+}
+
+void direita() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+}
+
+void parar() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+}
+
+// =======================================================
+// ---- SETUP ----
+// =======================================================
+void setup() {
+
+  Serial.begin(9600);
+  Serial.println("=== ROBO SUMO - MODO TESTE ===");
+
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(TRIG_F, OUTPUT); pinMode(ECHO_F, INPUT);
+  pinMode(TRIG_E, OUTPUT); pinMode(ECHO_E, INPUT);
+  pinMode(TRIG_D, OUTPUT); pinMode(ECHO_D, INPUT);
+
+  pinMode(LINHA_E, INPUT);
+  pinMode(LINHA_C, INPUT);
+  pinMode(LINHA_D, INPUT);
+
+  tempoInicio = millis();
+}
+
+// =======================================================
+// ---- LOOP ----
+// =======================================================
+void loop() {
+
+  // ================= MODO TESTE =================
+  if (millis() - tempoInicio < TEMPO_DEBUG) {
+
+    int le = digitalRead(LINHA_E);
+    int lc = digitalRead(LINHA_C);
+    int ld = digitalRead(LINHA_D);
+
+    Serial.print("LINHA -> E:");
+    Serial.print(le);
+    Serial.print(" C:");
+    Serial.print(lc);
+    Serial.print(" D:");
+    Serial.println(ld);
+
+    float f = lerUltrassom(TRIG_F, ECHO_F);
+    float e = lerUltrassom(TRIG_E, ECHO_E);
+    float d = lerUltrassom(TRIG_D, ECHO_D);
+
+    Serial.print("ULTRA -> F:");
+    Serial.print(f);
+    Serial.print(" E:");
+    Serial.print(e);
+    Serial.print(" D:");
+    Serial.println(d);
+
+    Serial.println("-----------------------------");
+    delay(400);
+    return;
+  }
+
+  // ================= DETECTA LOGICA DO BRANCO =================
+  static bool calibrado = false;
+  static int referencia = -1;
+
+  if (!calibrado) {
+    referencia = digitalRead(LINHA_C);
+    brancoLOW = (referencia == LOW);
+    calibrado = true;
+
+    Serial.print("Calibracao: BRANCO = ");
+    Serial.println(brancoLOW ? "LOW" : "HIGH");
+    delay(1000);
+  }
+
+  // ================= MODO SUMO =================
+  int le = digitalRead(LINHA_E);
+  int lc = digitalRead(LINHA_C);
+  int ld = digitalRead(LINHA_D);
+
+  bool linhaBranca =
+    (brancoLOW && (le == LOW || lc == LOW || ld == LOW)) ||
+    (!brancoLOW && (le == HIGH || lc == HIGH || ld == HIGH));
+
+  if (linhaBranca) {
+    tras();
+    delay(250);
+    direita();
+    delay(300);
+    return;
+  }
+
+  float f = lerUltrassom(TRIG_F, ECHO_F);
+  float e = lerUltrassom(TRIG_E, ECHO_E);
+  float d = lerUltrassom(TRIG_D, ECHO_D);
+
+  if (f < 40) {
+    frente();
+  }
+  else if (e < 35) {
+    esquerda();
+  }
+  else if (d < 35) {
+    direita();
+  }
+  else {
+    esquerda();
+  }
+}
+
+
+
