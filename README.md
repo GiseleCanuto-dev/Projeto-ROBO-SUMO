@@ -58,9 +58,9 @@ A estrutura física do robô foi montada de forma adequada, com o chassi e os fi
   
 ## 👥 Autores
 Gisele Canuto Damasceno;
-Erica Campos Santana
-Maria Santana Machado
-Yan
-Felipe
+Érica Campos de Santana;
+Filipe Casaes Santana;
+Maria Clara Santana Machado;
+Yan Klaivert Kaionan Mascarenhas Lima.
 
-Projeto desenvolvido em grupo como atividade acadêmica no SENAI.
+volvido em grupo como atividade acadêmica no SENAI.
